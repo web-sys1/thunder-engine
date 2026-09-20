@@ -4,11 +4,11 @@ const USE_EXPERIMENTAL_FEATURE: bool = true
 const RESURRECTION_TIME: float = 8.0
 const WARNING_DURATION: float = 1.0
 
-const UID_MAP = {
-	"green": "uid://cno8qn60lpnvv",
-	"red": "uid://b24hnsctae1a0",
-	"blue": "uid://c7ndajwed1l1n",
-	"yellow": "uid://cit8vdoqn0xoo"
+const PATH_MAP = {
+	"green": "res://engine/objects/enemies/koopas/koopa_green.tscn",
+	"red": "res://engine/objects/enemies/koopas/koopa_red.tscn",
+	"blue": "res://engine/objects/enemies/koopas/koopa_blue.tscn",
+	"yellow": "res://engine/objects/enemies/koopas/koopa_yellow.tscn"
 }
 
 var tracked_shells: Dictionary = {}
@@ -112,18 +112,19 @@ func _get_alive_scene(node: Node) -> PackedScene:
 	if "buzzle" in file_check or "buzzy" in file_check or "buzzle" in name_lower or "buzzy" in name_lower:
 		return null 
 		
-	var target_uid: String = ""
-	
+	var target_path: String = ""
 	if node.has_meta(&"shell_color_id"):
 		match node.get_meta(&"shell_color_id"):
-			0: target_uid = UID_MAP["green"]
-			1: target_uid = UID_MAP["red"]
-			2: target_uid = UID_MAP["blue"]
-			3: target_uid = UID_MAP["yellow"]
+			0: target_path = PATH_MAP["green"]
+			1: target_path = PATH_MAP["red"]
+			2: target_path = PATH_MAP["blue"]
+			3: target_path = PATH_MAP["yellow"]
 
-	if target_uid.is_empty(): return null
+	if target_path.is_empty(): return null
 	
-	var id: int = ResourceUID.text_to_id(target_uid)
-	if ResourceUID.has_id(id):
-		return load(ResourceUID.get_id_path(id)) as PackedScene
+	if ResourceLoader.exists(target_path):
+		var id: int = ResourceLoader.get_resource_uid(target_path)
+		if ResourceUID.has_id(id):
+			return load(ResourceUID.get_id_path(id)) as PackedScene
+			
 	return null
